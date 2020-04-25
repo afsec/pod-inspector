@@ -12,7 +12,7 @@ struct LoginForm {
 }
 
 fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static> {
-    use time::{Duration, OffsetDateTime};
+    use time::strptime;
     // Session ID: first part(epoch+time -> uuidv1) + second part(random uuidv4)
 
     // Get current epoch time to generate uuidv1
@@ -39,6 +39,8 @@ fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static>
 
     // Calculate expiration time of sessions
     let now = epoch_secs;
+    // let time_to_expire = now + 40; // 40 seconds
+    let time_to_expire = now + 172_800; // 48 hours in seconds
 
     // Save Cookie into backend
     let new_user = NewSession {
@@ -53,17 +55,15 @@ fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static>
     cookie_session.set_same_site(SameSite::Strict);
     // TODO: Maybe set Cookie with `Secure` parameter (in the future commits)
 
-    cookie_session.set_expires(OffsetDateTime::now() + Duration::hours(48));
+    let time_to_expire = format!("{:?}", time_to_expire);
+    dbg!(&time_to_expire);
+    let time_to_expire = strptime(&time_to_expire, "%s").unwrap();
+    dbg!(&time_to_expire);
+    cookie_session.set_expires(time_to_expire);
     cookie_session
 }
 
 fn get_cookie_from_request(req: &Request<State>, cookie_name: &str) -> Option<String> {
-    // let option_cookie = match req.cookie(cookie_name) {
-    //     Some(option) => option,
-    //     Err(_) => {
-    //         return None;
-    //     }
-    // };
     let cookie_str = match req.cookie(cookie_name) {
         Some(cookie) => cookie.to_string(),
         None => return None,
@@ -143,11 +143,11 @@ pub async fn submit_login(mut req: Request<State>) -> tide::Result {
             <meta http-equiv="refresh" content="0; url=/">
             </head>"#
                 .to_string();
-            // let mut res = Response::new(200).body_string(html);
-            //TODO: Fix -> `res.set_cookie(cookie);`
-            Ok(tide::Response::new(StatusCode::TemporaryRedirect)
+            let mut res = tide::Response::new(StatusCode::TemporaryRedirect)
                 .body_string(html)
-                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8);
+            res.set_cookie(cookie);
+            Ok(res)
         } else {
             println!("Username and/or Passsword not found");
             let html = r#"<head>
@@ -191,8 +191,9 @@ pub async fn logout(req: Request<State>) -> tide::Result {
     <meta http-equiv="refresh" content="0; url=/">
     </head>"#
         .to_string();
-    //TODO: Fix -> `let res = res.remove_cookie(Cookie::named("session_id"));`
-    Ok(tide::Response::new(StatusCode::TemporaryRedirect)
+    let mut res = tide::Response::new(StatusCode::TemporaryRedirect)
         .body_string(html)
-        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8);
+        res.remove_cookie(Cookie::named("session_id"));
+        Ok(res)
 }

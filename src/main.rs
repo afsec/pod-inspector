@@ -36,9 +36,9 @@ fn main() -> Result<(), std::io::Error> {
         task::block_on(async {
             let mut app = Server::with_state(State::new());
             app.at("/").get(api::presenter::index_page);
-            // app.at("/login").get(auth::show_login);
-            // app.at("/login").post(auth::submit_login);
-            // app.at("/logout").get(auth::logout);
+            app.at("/login").get(auth::show_login);
+            app.at("/login").post(auth::submit_login);
+            app.at("/logout").get(auth::logout);
             // app.at("/uptime").get(api::presenter::show_uptime);
             // app.at("/processes").get(api::presenter::show_processes);
             // app.at("/interfaces").get(api::presenter::show_interfaces);
@@ -52,8 +52,8 @@ fn main() -> Result<(), std::io::Error> {
             // app.at("/show-root").get(api::presenter::show_root);
             // app.at("/show-pwd").get(api::presenter::show_pwd);
             // app.at("/cpuinfo").get(api::presenter::cpuinfo);
-            // app.at("/404").get(auth::show_404);
-            // app.at("/404").post(auth::show_404);
+            app.at("/404").get(auth::show_404);
+            app.at("/404").post(auth::show_404);
             // // app.at("/fib/:n").get(fibsum);
             // app.at("/fib").get(api::presenter::fibsum);
 
