@@ -3,7 +3,7 @@ use cookie::{Cookie, SameSite};
 use http_types::{headers::CONTENT_TYPE, StatusCode};
 use mime::TEXT_HTML_UTF_8;
 use std::time::{SystemTime, UNIX_EPOCH};
-use tide::{Request, Response};
+use tide::Request;
 
 #[derive(Debug, serde::Deserialize)]
 struct LoginForm {

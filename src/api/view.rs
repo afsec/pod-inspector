@@ -1,6 +1,8 @@
 use crate::in_memory_db::Session;
 use std::env;
-use crate::{VERSION,PROGRAM_NAME};
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const PROGRAM_NAME: &str = env!("CARGO_PKG_NAME");
 
 pub async fn render_page(session: Session, output_command: Option<String>) -> String {
     let hostname = match env::var("HOSTNAME") {
