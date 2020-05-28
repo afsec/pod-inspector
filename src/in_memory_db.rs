@@ -5,7 +5,7 @@ use std::sync::RwLock;
 pub struct Session {
     id: Option<u16>,
     session_token: String,
-    expires_at: u64,
+    expires_at: i64,
     username: String,
 }
 
@@ -20,7 +20,7 @@ impl Session {
     pub fn get_username(&self) -> &str {
         &self.username
     }
-    pub fn get_expires_at(&self) -> u64 {
+    pub fn get_expires_at(&self) -> i64 {
         self.expires_at
     }
 }
@@ -29,7 +29,7 @@ impl Session {
 pub struct NewSession {
     pub session_token: String,
     // EpochTime
-    pub expires_at: u64,
+    pub expires_at: i64,
     pub username: String,
 }
 

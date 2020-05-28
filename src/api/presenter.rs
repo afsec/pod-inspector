@@ -4,7 +4,7 @@ use crate::in_memory_db::State;
 
 use tide::Request;
 
-use http_types::{headers::CONTENT_TYPE, StatusCode};
+use http_types::{headers::LOCATION, StatusCode};
 use mime::TEXT_HTML_UTF_8;
 
 fn fib(n: usize) -> usize {
@@ -36,13 +36,13 @@ pub async fn fibsum(req: Request<State>) -> tide::Result {
             let html = view::render_page(session, Some(command_output)).await;
             Ok(tide::Response::new(StatusCode::Ok)
                 .body_string(html)
-                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                .set_mime(TEXT_HTML_UTF_8))
         }
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -54,20 +54,20 @@ pub async fn printenv(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -79,20 +79,20 @@ pub async fn show_memory(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -104,20 +104,20 @@ pub async fn cpuinfo(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -129,20 +129,20 @@ pub async fn show_disk(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -154,20 +154,20 @@ pub async fn show_processes(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -179,20 +179,20 @@ pub async fn show_root(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -204,20 +204,20 @@ pub async fn show_pwd(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -229,20 +229,20 @@ pub async fn show_uptime(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -254,20 +254,20 @@ pub async fn show_lsof(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -280,13 +280,13 @@ pub async fn show_interfaces(req: Request<State>) -> tide::Result {
                     let html = view::render_page(session, Some(stdout)).await;
                     Ok(tide::Response::new(StatusCode::Ok)
                         .body_string(html)
-                        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                        .set_mime(TEXT_HTML_UTF_8))
                 }
                 Err(stderr) => {
                     let html = view::render_page(session, Some(stderr)).await;
                     Ok(tide::Response::new(StatusCode::Ok)
                         .body_string(html)
-                        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                        .set_mime(TEXT_HTML_UTF_8))
                 }
             }
         }
@@ -294,7 +294,7 @@ pub async fn show_interfaces(req: Request<State>) -> tide::Result {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -306,20 +306,20 @@ pub async fn show_netstat(req: Request<State>) -> tide::Result {
                 let html = view::render_page(session, Some(stdout)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
             Err(stderr) => {
                 let html = view::render_page(session, Some(stderr)).await;
                 Ok(tide::Response::new(StatusCode::Ok)
                     .body_string(html)
-                    .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                    .set_mime(TEXT_HTML_UTF_8))
             }
         },
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }
@@ -330,13 +330,13 @@ pub async fn index_page(req: Request<State>) -> tide::Result {
             let html = view::render_page(session, None).await;
             Ok(tide::Response::new(StatusCode::Ok)
                 .body_string(html)
-                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                .set_mime(TEXT_HTML_UTF_8))
         }
         Err(_) => {
             println!("Request not authenticated");
             // Err(http_types::Error::from_str(StatusCode::BadRequest, "Bad Request"))
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
-                .set_header("Location".parse().unwrap(), "/login"))
+                .set_header(LOCATION, "/login"))
         }
     }
 }

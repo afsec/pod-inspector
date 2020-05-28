@@ -1,25 +1,28 @@
 [package]
 name = 'pod-inspector'
-version = '0.1.5'
+version = '0.1.6'
 authors = ['Antonio Feitosa <antonio.cfc@gmail.com>']
 edition = '2018'
 
 [dependencies]
-async-std = '1.5.0'
-tide = '0.8.0'
-time = "0.1"
-mime = "0.3.16"
-http-types = "1.2.0"
-clap = "2.33.0"
+async-std = '1.6.0'
+tide = '0.9.0'
+time = '0.2.16'
+mime = '0.3.16'
+http-types = '2.0.1'
+clap = '2.33.1'
 
 [dependencies.serde]
-version = "1.0.106"
-features = ["derive"]
+version = '1.0.110'
+features = ['derive']
 
 [dependencies.cookie]
-version = '0.12.0'
+version = '0.13.3'
 features = ['percent-encode']
 
 [dependencies.uuid]
 version = '0.8.1'
-features = ['v1','v4']
+features = [
+    'v1',
+    'v4',
+]

@@ -1,6 +1,6 @@
 use crate::in_memory_db::{Database, NewSession, Session, State};
 use cookie::{Cookie, SameSite};
-use http_types::{headers::CONTENT_TYPE, StatusCode};
+use http_types::StatusCode;
 use mime::TEXT_HTML_UTF_8;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tide::Request;
@@ -12,7 +12,8 @@ struct LoginForm {
 }
 
 fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static> {
-    use time::strptime;
+    // use time::strptime;
+    use time::OffsetDateTime;
     // Session ID: first part(epoch+time -> uuidv1) + second part(random uuidv4)
 
     // Get current epoch time to generate uuidv1
@@ -23,12 +24,16 @@ fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static>
     let full_epoch_string = format!("{:?}", full_epoch).replace("s", "");
     let full_epoch_vec: Vec<&str> = full_epoch_string.split('.').collect();
 
-    let epoch_secs = full_epoch_vec[0].parse::<u64>().unwrap();
+    let epoch_secs = full_epoch_vec[0].parse::<i64>().unwrap();
     let epoch_milis = full_epoch_vec[1].parse::<u32>().unwrap();
 
     // Generate uuid v1
     let context = uuid::v1::Context::new(42);
-    let ts = uuid::v1::Timestamp::from_unix(&context, epoch_secs, epoch_milis);
+    let ts = uuid::v1::Timestamp::from_unix(
+        &context,
+        full_epoch_vec[0].parse::<u64>().unwrap(),
+        epoch_milis,
+    );
     let uuidv1 = uuid::Uuid::new_v1(ts, &[1, 2, 3, 4, 5, 6]).expect("failed to generate UUID");
 
     // Generate uuid v4
@@ -55,10 +60,14 @@ fn new_cookie_session(req: &Request<State>, username: String) -> Cookie<'static>
     cookie_session.set_same_site(SameSite::Strict);
     // TODO: Maybe set Cookie with `Secure` parameter (in the future commits)
 
-    let time_to_expire = format!("{:?}", time_to_expire);
+    // let time_to_expire = format!("{:?}", time_to_expire);
+    // dbg!(&time_to_expire);
+    // let time_to_expire = strptime(&time_to_expire, "%s").unwrap();
+    let time_to_expire = OffsetDateTime::from_unix_timestamp(time_to_expire);
     dbg!(&time_to_expire);
-    let time_to_expire = strptime(&time_to_expire, "%s").unwrap();
-    dbg!(&time_to_expire);
+    //TODO:
+    // ! 62 |     cookie_session.set_expires(time_to_expire);
+    // !     |                    ^^^^^^^^^^^ the trait `std::convert::From<time::Tm>` is not implemented for `std::option::Option<time::offset_date_time::OffsetDateTime>
     cookie_session.set_expires(time_to_expire);
     cookie_session
 }
@@ -89,7 +98,7 @@ pub fn is_authenticated(req: Request<State>) -> Result<Session, ()> {
     let full_epoch_string = format!("{:?}", full_epoch).replace("s", "");
     let full_epoch_vec: Vec<&str> = full_epoch_string.split('.').collect();
 
-    let now_epoch_secs = full_epoch_vec[0].parse::<u64>().unwrap();
+    let now_epoch_secs = full_epoch_vec[0].parse::<i64>().unwrap();
     dbg!(&now_epoch_secs);
     // * Implements expiration time at backend by invalidate a session
     match Database::list_sessions(req.state()).iter().find(|session| {
@@ -105,7 +114,7 @@ pub async fn show_login(req: Request<State>) -> tide::Result {
     let html = include_str!("../static_html/login.html").to_string();
     Ok(tide::Response::new(StatusCode::Ok)
         .body_string(html)
-        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+        .set_mime(TEXT_HTML_UTF_8))
 }
 
 fn is_valid_auth(username: String, password: String) -> bool {
@@ -145,7 +154,7 @@ pub async fn submit_login(mut req: Request<State>) -> tide::Result {
                 .to_string();
             let mut res = tide::Response::new(StatusCode::TemporaryRedirect)
                 .body_string(html)
-                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8);
+                .set_mime(TEXT_HTML_UTF_8);
             res.set_cookie(cookie);
             Ok(res)
         } else {
@@ -156,7 +165,7 @@ pub async fn submit_login(mut req: Request<State>) -> tide::Result {
                 .to_string();
             Ok(tide::Response::new(StatusCode::TemporaryRedirect)
                 .body_string(html)
-                .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+                .set_mime(TEXT_HTML_UTF_8))
         }
     } else {
         println!("Invalid Form");
@@ -166,7 +175,7 @@ pub async fn submit_login(mut req: Request<State>) -> tide::Result {
             .to_string();
         Ok(tide::Response::new(StatusCode::TemporaryRedirect)
             .body_string(html)
-            .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+            .set_mime(TEXT_HTML_UTF_8))
     }
 }
 
@@ -175,7 +184,7 @@ pub async fn show_404(req: Request<State>) -> tide::Result {
     let html = include_str!("../static_html/404.html").to_string();
     Ok(tide::Response::new(StatusCode::NotFound)
         .body_string(html)
-        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8))
+        .set_mime(TEXT_HTML_UTF_8))
 }
 
 pub async fn logout(req: Request<State>) -> tide::Result {
@@ -193,7 +202,7 @@ pub async fn logout(req: Request<State>) -> tide::Result {
         .to_string();
     let mut res = tide::Response::new(StatusCode::TemporaryRedirect)
         .body_string(html)
-        .set_header(CONTENT_TYPE, TEXT_HTML_UTF_8);
-        res.remove_cookie(Cookie::named("session_id"));
-        Ok(res)
+        .set_mime(TEXT_HTML_UTF_8);
+    res.remove_cookie(Cookie::named("session_id"));
+    Ok(res)
 }
